@@ -77,7 +77,10 @@ public function index(Request $request)
     public function show(Book $book): View
     {
         $book->load('category');
-        return view('books.show', compact('book'));
+        $isUnavailable = \App\Models\Borrowing::where('book_id', $book->id)
+            ->whereNull('returned_at')
+            ->exists();
+        return view('books.show', compact('book', 'isUnavailable'));
     }
 
     public function catalog(Request $request): View

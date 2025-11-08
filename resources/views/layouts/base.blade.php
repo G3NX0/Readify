@@ -11,6 +11,15 @@
       .nav-link::after { content:""; position:absolute; left:0; bottom:-4px; height:2px; width:0%; background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.8), rgba(255,255,255,0.1)); transition: width .3s ease; }
       .nav-link:hover { color: rgba(255,255,255,.85); }
       .nav-link:hover::after { width:100%; }
+      /* Reusable glass + form styles */
+      .glass-panel { background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(14px); border-radius: 16px; }
+      .field-label { color: rgba(255,255,255,0.85); font-size: .9rem; margin-bottom: 6px; display:block; }
+      .input-dark, .select-dark, .textarea-dark { width:100%; color:#fff; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 12px; transition: border-color .2s ease; }
+      .input-dark:focus, .select-dark:focus, .textarea-dark:focus { outline: none; border-color: rgba(255,255,255,0.4); }
+      .btn-white { background: #fff; color:#000; font-weight:600; padding: 10px 14px; border-radius: 10px; }
+      .btn-white:hover { filter: brightness(.95); }
+      .btn-outline { border:1px solid rgba(255,255,255,0.35); color:#fff; padding: 10px 14px; border-radius: 10px; }
+      .btn-outline:hover { background: rgba(255,255,255,0.06); }
     </style>
     <link 
       rel="stylesheet" 

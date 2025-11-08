@@ -216,6 +216,8 @@
     const bookSelect = document.getElementById('bookSelect');
     const borrowDateInput = document.getElementById('borrowDate');
     const returnDateInput = document.getElementById('returnDate');
+    const preCat = @json((int) request('category_id'));
+    const preBook = @json((int) request('book_id'));
 
     function populateBooks() {
       const categoryId = categorySelect.value;
@@ -250,6 +252,21 @@
       const retStr = `${ryyyy}-${rmm}-${rdd}`;
       if (borrowDateInput) borrowDateInput.value = todayStr;
       if (returnDateInput) returnDateInput.value = retStr;
+    })();
+
+    // Preselect category/book if provided via query string
+    (function preselect(){
+      if (!categorySelect) return;
+      if (preCat) {
+        categorySelect.value = String(preCat);
+        populateBooks();
+        if (preBook) {
+          bookSelect.value = String(preBook);
+          const selected = bookSelect.options[bookSelect.selectedIndex];
+          const field = document.getElementById('authorField');
+          if (field && selected) field.value = selected.dataset.author || '';
+        }
+      }
     })();
   </script>
  </body>
