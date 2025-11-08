@@ -6,19 +6,38 @@
     <a href="{{ route('books.create') }}" class="inline-flex items-center rounded bg-gray-900 px-3 py-2 text-white hover:bg-black">New Book</a>
   </div>
 
-  <form method="GET" class="mb-6 flex flex-wrap gap-3 items-center">
-    <div>
-      <label class="text-sm text-gray-600 mr-2">Category:</label>
-      <select name="category_id" class="rounded border-gray-300" onchange="this.form.submit()">
-        <option value="">All</option>
-        @foreach($categories as $category)
-          <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
-        @endforeach
-      </select>
-    </div>
-    <div class="flex items-center gap-2">
-      <input type="text" name="q" value="{{ request('q') }}" placeholder="Search title/author/synopsis" class="rounded border-gray-300" />
-      <button class="px-3 py-2 rounded bg-gray-900 text-white">Search</button>
+  <style>
+    /* Minimal-dark search controls */
+    .filter-bar { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+    .input-wrap { position: relative; }
+    .input-wrap svg { position:absolute; left:10px; top:50%; transform: translateY(-50%); opacity:.7; }
+    .input-dark, .select-dark { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); color:#fff; border-radius: 10px; padding:10px 12px; }
+    .input-dark { padding-left: 38px; min-width: 260px; }
+    .input-dark::placeholder { color: rgba(255,255,255,0.6); }
+    .btn-ghost { border:1px solid rgba(255,255,255,0.35); color:#fff; padding:10px 14px; border-radius:10px; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.06); }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  </style>
+
+  <form method="GET" class="mb-6">
+    <div class="filter-bar">
+      <div>
+        <label for="category_id" class="sr-only">Category</label>
+        <select id="category_id" name="category_id" class="select-dark" onchange="this.form.submit()">
+          <option value="">All categories</option>
+          @foreach($categories as $category)
+            <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+          <line x1="16.65" y1="16.65" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="text" name="q" value="{{ request('q') }}" placeholder="Search title, author, synopsis" class="input-dark" />
+      </div>
+      <button type="submit" class="btn-ghost">Search</button>
     </div>
   </form>
 
