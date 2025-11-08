@@ -92,15 +92,12 @@
  <body>
   <div class="min-h-full gradient-bg">
     @include('partials.navbar')
-
-
-
     <!-- Hero Section -->
     <section id="home" class="hero-gradient" style="padding: 120px 24px 80px; text-align: center; position: relative; overflow: hidden;">
       <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 2;">
         <div class="floating" style="margin-bottom: 32px;">
           <h1 class="text-glow" style="font-size: 56px; font-weight: 800; color: #ffffff; margin: 0 0 24px 0; line-height: 1.1; letter-spacing: -0.02em;">
-            Transform Your Library Experience
+            Readify: Your Favourite Library
           </h1>
           <p style="font-size: 20px; color: #888888; margin: 0 0 40px 0; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
             Modern digital library management system with advanced features for seamless book tracking and user management

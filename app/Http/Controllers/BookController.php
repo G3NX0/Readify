@@ -10,24 +10,33 @@ use Illuminate\View\View;
 
 class BookController extends Controller
 {
-    public function index(Request $request): View
-    {
-        $categories = Category::orderBy('name')->get();
-        $query = Book::with('category');
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->integer('category_id'));
-        }
-        if ($request->filled('q')) {
-            $q = $request->string('q');
-            $query->where(function($w) use ($q) {
-                $w->where('title', 'like', "%{$q}%")
-                  ->orWhere('author', 'like', "%{$q}%")
-                  ->orWhere('synopsis', 'like', "%{$q}%");
-            });
-        }
-        $books = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
-        return view('books.index', compact('books', 'categories'));
+public function index(Request $request)
+{
+    $categories = Category::orderBy('name')->get();
+    $query = Book::with('category');
+
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->integer('category_id'));
     }
+
+    if ($request->filled('q')) {
+        $q = $request->string('q');
+        $query->where(function ($w) use ($q) {
+            $w->where('title', 'like', "%{$q}%")
+              ->orWhere('author', 'like', "%{$q}%")
+              ->orWhere('synopsis', 'like', "%{$q}%");
+        });
+    }
+
+    $books = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
+
+    // 👇 kalau request-nya AJAX, kirim partial table aja
+    if ($request->ajax()) {
+        return view('books.partials.table', compact('books'))->render();
+    }
+
+    return view('books.index', compact('books', 'categories'));
+}
 
     public function create(): View
     {
@@ -120,5 +129,27 @@ class BookController extends Controller
     {
         $book->delete();
         return redirect()->route('books.index')->with('status', 'Book deleted');
+    }
+
+    public function liveSearch(Request $request)
+    {
+        $query = Book::with('category');
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->integer('category_id'));
+        }
+
+        if ($request->filled('q')) {
+            $q = $request->string('q');
+            $query->where(function($w) use ($q) {
+                $w->where('title', 'like', "%{$q}%")
+                ->orWhere('author', 'like', "%{$q}%")
+                ->orWhere('synopsis', 'like', "%{$q}%");
+            });
+        }
+
+        $books = $query->orderByDesc('created_at')->limit(10)->get();
+
+        return response()->json($books);
     }
 }

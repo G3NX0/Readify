@@ -1,77 +1,115 @@
 @extends('layouts.base', ['title' => 'Books'])
 
 @section('content')
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-semibold">Books</h1>
-    <a href="{{ route('books.create') }}" class="inline-flex items-center rounded bg-gray-900 px-3 py-2 text-white hover:bg-black">New Book</a>
+<style>
+  .glass-container {
+    background: rgba(20, 20, 20, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+  .glass-input {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+  }
+  .glass-input::placeholder { color: rgba(255,255,255,0.5); }
+  .glass-input:focus {
+    border-color: rgba(255, 255, 255, 0.25);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.08);
+  }
+  .glass-select {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+  }
+  .glass-select option { background: #0f0f0f; color: #fff; }
+  .btn-dark { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.12); transition: all 0.2s ease; }
+  .btn-dark:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.25); }
+  .btn-danger { color: #f87171; border-color: rgba(248,113,113,0.4); }
+  .btn-danger:hover { background: rgba(248,113,113,0.15); }
+</style>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-semibold text-white">Books</h1>
+  <a href="{{ route('books.create') }}" class="rounded-lg bg-white text-black px-4 py-2 text-sm font-semibold hover:bg-gray-200 transition">
+    <i class="bi bi-plus-lg mr-1"></i> Add Book
+  </a>
+</div>
+
+{{-- SEARCH FORM --}}
+<form method="GET" id="search-form" class="mb-6 flex flex-wrap gap-3 items-center glass-container p-4 rounded-lg">
+  <div class="flex items-center gap-2">
+    <label class="text-sm text-gray-300">Category:</label>
+    <select name="category_id" class="glass-select rounded-md text-sm px-3 py-1.5">
+      <option value="">All</option>
+      @foreach($categories as $category)
+        <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+          {{ $category->name }}
+        </option>
+      @endforeach
+    </select>
   </div>
 
-  <form method="GET" class="mb-6 flex flex-wrap gap-3 items-center">
-    <div class="flex items-center gap-2">
-      <label class="text-sm text-gray-300">Category:</label>
-      <select 
-        name="category_id" 
-        class="rounded-lg border border-gray-600 bg-gray-800 text-white text-sm px-3 py-1.5 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 transition"
-        onchange="this.form.submit()"
-      >
-        <option value="">All</option>
-        @foreach($categories as $category)
-          <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
-        @endforeach
-      </select>
-    </div>
-
-    <div class="relative flex-grow max-w-md">
-      <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-      <input 
-        type="text" 
-        name="q" 
-        value="{{ request('q') }}" 
-        placeholder="Search title, author, or synopsis..." 
-        class="w-full rounded-full border border-gray-700 bg-gray-900 pl-10 pr-24 py-2 text-sm text-gray-200 shadow-inner focus:border-gray-500 focus:ring-0 transition placeholder-gray-500"
-      />
-      <button 
-        class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-white px-4 py-1.5 text-black font-semibold text-sm hover:bg-gray-200 transition"
-      >
-        Search
-      </button>
-    </div>
-  </form>
-
-
-  <div class="overflow-hidden rounded bg-white shadow">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Title</th>
-          <th class="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Author</th>
-          <th class="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Category</th>
-          <th class="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Synopsis</th>
-          <th class="px-4 py-2"></th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200 bg-white">
-        @forelse($books as $book)
-          <tr>
-            <td class="px-4 py-2 font-medium">{{ $book->title }}</td>
-            <td class="px-4 py-2">{{ $book->author ?? '-' }}</td>
-            <td class="px-4 py-2">{{ $book->category->name ?? '-' }}</td>
-            <td class="px-4 py-2 text-gray-600">{{ Str::limit($book->synopsis, 120) }}</td>
-            <td class="px-4 py-2 text-right">
-              <a href="{{ route('books.edit', $book) }}" class="text-blue-600 hover:underline mr-3">Edit</a>
-              <form action="{{ route('books.destroy', $book) }}" method="POST" class="inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('Delete this book?')">Delete</button>
-              </form>
-            </td>
-          </tr>
-        @empty
-          <tr><td class="px-4 py-6 text-gray-500" colspan="4">No books yet.</td></tr>
-        @endforelse
-      </tbody>
-    </table>
+  <div class="relative flex-grow max-w-md">
+    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+    <input type="text" name="q" id="search-input" placeholder="Search title, author, or synopsis..." class="glass-input w-full pl-10 pr-24 py-2 rounded-full text-sm"/>
+    <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-white text-black font-semibold text-sm px-4 py-1.5 hover:bg-gray-200 transition">
+      Search
+    </button>
   </div>
+</form>
 
-  <div class="mt-4">{{ $books->links() }}</div>
+<div id="search-results">
+  @include('books.partials.table', ['books' => $books])
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('search-form');
+  const input = document.getElementById('search-input');
+  const categorySelect = form.querySelector('select[name="category_id"]');
+  const results = document.getElementById('search-results');
+  let timeout = null;
+
+  const fetchResults = () => {
+    const q = input.value.trim();
+    const category = categorySelect.value;
+    const params = new URLSearchParams({ q, category_id: category });
+
+    results.innerHTML = `
+      <div class="flex justify-center py-6 text-gray-400 text-sm animate-pulse">
+        <span>Loading...</span>
+      </div>
+    `;
+
+    fetch(`{{ route('books.index') }}?${params.toString()}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.text())
+    .then(html => results.innerHTML = html)
+    .catch(err => {
+      console.error('Fetch error:', err);
+      results.innerHTML = `<div class="text-center py-6 text-red-500">Error loading data</div>`;
+    });
+  };
+
+  input.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(fetchResults, 300);
+  });
+
+  categorySelect.addEventListener('change', fetchResults);
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    fetchResults();
+  });
+});
+</script>
 @endsection

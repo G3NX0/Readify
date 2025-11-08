@@ -22,6 +22,7 @@ Route::middleware('admin')->group(function () {
 
     // Books CRUD
     Route::resource('books', BookController::class)->except(['show']);
+    Route::get('/books/live-search', [BookController::class, 'liveSearch'])->name('books.live-search');
 
     // Borrowings management
     Route::get('borrowings', [BorrowingController::class, 'index'])->name('borrowings.index');
