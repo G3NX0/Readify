@@ -6,21 +6,38 @@
     <a href="{{ route('books.create') }}" class="inline-flex items-center rounded bg-gray-900 px-3 py-2 text-white hover:bg-black">New Book</a>
   </div>
 
-  <form method="GET" class="mb-4 flex flex-wrap gap-3 items-center">
-    <div>
-      <label class="text-sm text-gray-600 mr-2">Category:</label>
-      <select name="category_id" class="rounded border-gray-300" onchange="this.form.submit()">
+  <form method="GET" class="mb-6 flex flex-wrap gap-3 items-center">
+    <div class="flex items-center gap-2">
+      <label class="text-sm text-gray-300">Category:</label>
+      <select 
+        name="category_id" 
+        class="rounded-lg border border-gray-600 bg-gray-800 text-white text-sm px-3 py-1.5 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 transition"
+        onchange="this.form.submit()"
+      >
         <option value="">All</option>
         @foreach($categories as $category)
           <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
         @endforeach
       </select>
     </div>
-    <div class="flex items-center gap-2">
-      <input type="text" name="q" value="{{ request('q') }}" placeholder="Search title/author/synopsis" class="rounded border-gray-300" />
-      <button class="px-3 py-2 rounded bg-gray-900 text-white">Search</button>
+
+    <div class="relative flex-grow max-w-md">
+      <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input 
+        type="text" 
+        name="q" 
+        value="{{ request('q') }}" 
+        placeholder="Search title, author, or synopsis..." 
+        class="w-full rounded-full border border-gray-700 bg-gray-900 pl-10 pr-24 py-2 text-sm text-gray-200 shadow-inner focus:border-gray-500 focus:ring-0 transition placeholder-gray-500"
+      />
+      <button 
+        class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-white px-4 py-1.5 text-black font-semibold text-sm hover:bg-gray-200 transition"
+      >
+        Search
+      </button>
     </div>
   </form>
+
 
   <div class="overflow-hidden rounded bg-white shadow">
     <table class="min-w-full divide-y divide-gray-200">

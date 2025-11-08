@@ -18,25 +18,50 @@
     <p class="text-gray-300">Browse books by category and search quickly</p>
   </div>
 
-  <form method="GET" class="mb-8 glass-effect rounded-xl p-4 flex flex-wrap gap-4 items-center">
-    <div class="flex-1 min-w-[240px]">
-      <label class="text-sm text-gray-300 mr-2">Category</label>
-      <select name="category_id" class="input-field rounded px-3 py-2 w-full" onchange="this.form.submit()">
+  <form method="GET" class="mb-8 glass-effect rounded-xl p-4 flex flex-wrap gap-4 items-end">
+    <div class="flex-1 min-w-[220px]">
+      <label class="text-sm text-gray-300 block mb-1">Category</label>
+      <select 
+        name="category_id" 
+        class="input-field rounded-lg px-3 py-2 w-full text-sm focus:ring-1 focus:ring-gray-400 transition"
+        onchange="this.form.submit()"
+      >
         <option value="">All</option>
         @foreach($filterCategories as $category)
           <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>{{ $category->name }}</option>
         @endforeach
       </select>
     </div>
-    <div class="flex-1 min-w-[240px]">
-      <label class="text-sm text-gray-300 mr-2">Search</label>
-      <div class="flex gap-2">
-        <input type="text" name="q" value="{{ request('q') }}" placeholder="Title, author, or synopsis" class="input-field rounded px-3 py-2 w-full" />
-        <button class="submit-button rounded px-4 py-2">Go</button>
+
+    <div class="flex flex-1 items-end gap-2 min-w-[280px]">
+      <div class="flex-1">
+        <label class="text-sm text-gray-300 block mb-1">Search</label>
+        <div class="relative">
+          <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input 
+            type="text" 
+            name="q" 
+            value="{{ request('q') }}" 
+            placeholder="Title, author, or synopsis" 
+            class="input-field pl-9 pr-3 py-2 w-full rounded-lg text-sm"
+          />
+        </div>
       </div>
-    </div>
-    <div>
-      <a href="{{ route('books.catalog') }}" class="text-gray-300 hover:text-white">Reset</a>
+
+      <div class="flex gap-2">
+        <button 
+          type="submit" 
+          class="bg-white text-black font-semibold text-sm px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+        >
+          Go
+        </button>
+        <a 
+          href="{{ route('books.catalog') }}" 
+          class="border border-gray-500 text-gray-300 text-sm px-4 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition"
+        >
+          Reset
+        </a>
+      </div>
     </div>
   </form>
 

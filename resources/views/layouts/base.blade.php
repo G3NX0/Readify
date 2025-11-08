@@ -12,6 +12,10 @@
       .nav-link:hover { color: rgba(255,255,255,.85); }
       .nav-link:hover::after { width:100%; }
     </style>
+    <link 
+      rel="stylesheet" 
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
   </head>
   <body class="min-h-screen gradient-bg">
     <header>
