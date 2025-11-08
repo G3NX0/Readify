@@ -1,44 +1,58 @@
-<div class="overflow-hidden rounded-xl glass-container">
-  <table class="glass-table w-full">
+<div class="table-card mt-4">
+  <table class="table-min">
     <thead>
       <tr>
-        <th class="px-6 py-3 text-left text-white/90 font-semibold uppercase tracking-wider">Title</th>
-        <th class="px-6 py-3 text-left text-white/90 font-semibold uppercase tracking-wider">Author</th>
-        <th class="px-6 py-3 text-left text-white/90 font-semibold uppercase tracking-wider">Category</th>
-        <th class="px-6 py-3 text-left text-white/90 font-semibold uppercase tracking-wider">Synopsis</th>
-        <th class="px-6 py-3"></th>
+        <th style="width: 55px;">#</th>
+        <th>Title</th>
+        <th style="width: 140px;">Author</th>
+        <th style="width: 90px; text-align:center;">Category</th>
+        <th>Description</th>
+        <th style="width: 120px; text-align:center;">Actions</th>
       </tr>
-    </thead>  
-    <tbody id="book-table-body" class="divide-y divide-white/10">
-      @forelse($books as $book)
-        <tr class="transition hover:bg-white/5">
-          <td class="px-6 py-3 font-medium text-white/90">{{ $book->title }}</td>
-          <td class="px-6 py-3 text-white/90">{{ $book->author ?? '-' }}</td>
-          <td class="px-6 py-3 text-white/90">{{ $book->category->name ?? '-' }}</td>
-          <td class="px-6 py-3 text-white/60">{{ Str::limit($book->synopsis, 120) }}</td>
-          <td class="px-6 py-3 text-right">
-            <div class="flex justify-end gap-2">
-              <a href="{{ route('books.edit', $book) }}" class="btn-dark text-sm px-3 py-1.5 rounded-md border hover:text-indigo-300">
-                <i class="bi bi-pencil"></i> Edit
-              </a>
-              <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Delete this book?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn-dark btn-danger text-sm px-3 py-1.5 rounded-md border">
-                  <i class="bi bi-trash"></i> Delete
-                </button>
-              </form>
-            </div>
+    </thead>
+
+    <tbody>
+      @forelse ($books as $book)
+        <tr>
+          <td>{{ $loop->iteration + ($books->currentPage() - 1) * $books->perPage() }}</td>
+
+          <td>
+            <span class="font-semibold">{{ $book->title }}</span>
+          </td>
+
+          <td>{{ $book->author ?? '-' }}</td>
+
+          <td style="text-align:center;">
+            @if ($book->category)
+              <span class="badge-cat">{{ $book->category->name }}</span>
+            @else
+              <span class="muted">-</span>
+            @endif
+          </td>
+
+          <td>{{ Str::limit($book->synopsis, 120) }}</td>
+
+          <td style="text-align:center;">
+            <a href="{{ route('books.edit', $book->id) }}" class="icon-btn">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form action="{{ route('books.destroy', $book->id) }}" method="POST" class="inline">
+              @csrf @method('DELETE')
+              <button class="icon-btn icon-btn-danger" onclick="return confirm('Delete this book?')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
           </td>
         </tr>
       @empty
         <tr>
-          <td colspan="5" class="text-center py-6 text-gray-400">No books found.</td>
+          <td colspan="6" class="text-center py-6 muted">No books found</td>
         </tr>
       @endforelse
     </tbody>
   </table>
-  <div class="mt-4">
-    {{ $books->links() }}
-  </div>
+</div>
+
+<div class="mt-4">
+  {{ $books->links() }}
 </div>

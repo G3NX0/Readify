@@ -9,7 +9,6 @@
     <form action="{{ route('books.store') }}" method="POST" class="space-y-6">
       @csrf
 
-      {{-- Title --}}
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-1">Title</label>
         <input 
@@ -25,7 +24,6 @@
         @enderror
       </div>
 
-      {{-- Author --}}
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-1">Author</label>
         <input 
@@ -40,7 +38,6 @@
         @enderror
       </div>
 
-      {{-- Category --}}
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-1">Category</label>
         <select 
@@ -60,7 +57,6 @@
         @enderror
       </div>
 
-      {{-- Synopsis --}}
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-1">Synopsis</label>
         <textarea 
@@ -76,7 +72,6 @@
         @enderror
       </div>
 
-      {{-- Buttons --}}
       <div class="flex justify-end gap-3 pt-2">
         <a href="{{ route('books.index') }}"
            class="px-4 py-2 rounded-lg border border-white/10 text-gray-300 hover:bg-white/5 hover:border-white/20 transition duration-200">

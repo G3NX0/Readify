@@ -9,10 +9,11 @@
     .table-min tbody td { padding: 14px 16px; color: rgba(255,255,255,0.92); vertical-align: top; }
     .table-min tbody tr:hover { background: rgba(255,255,255,0.035); }
     .muted { color: rgba(255,255,255,0.75); }
-    .pill-link { border:1px solid rgba(255,255,255,0.35); color:#fff; padding:6px 10px; border-radius: 8px; font-size: .85rem; }
-    .pill-link:hover { background: rgba(255,255,255,0.06); }
-    .pill-success { border-color: rgba(16,185,129,0.5); color: #a7f3d0; }
-    .pill-success:hover { background: rgba(16,185,129,0.08); }
+
+    .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; border:1px solid rgba(255,255,255,0.35); color:#fff; transition: background 0.2s; }
+    .icon-btn:hover { background: rgba(255,255,255,0.06); }
+    .icon-btn-success { border-color: rgba(16,185,129,0.5); color: #a7f3d0; }
+    .icon-btn-success:hover { background: rgba(16,185,129,0.08); }
   </style>
 
   <div class="flex items-center justify-between mb-6">
@@ -52,17 +53,25 @@
             <td class="muted">{{ $borrowing->due_date?->format('Y-m-d') }}</td>
             <td class="muted">{{ $borrowing->returned_at?->format('Y-m-d') ?? '—' }}</td>
             <td class="muted">
-              @php $currentFine = $borrowing->returned_at ? $borrowing->fine_amount : $borrowing->calculateFine((int)config('borrowing.fine_per_day',10000)); @endphp
+              @php
+                $currentFine = $borrowing->returned_at
+                  ? $borrowing->fine_amount
+                  : $borrowing->calculateFine((int)config('borrowing.fine_per_day',10000));
+              @endphp
               {{ number_format($currentFine, 0, ',', '.') }}
             </td>
-            <td class="text-right whitespace-nowrap">
+            <td class="text-right whitespace-nowrap flex gap-2 justify-end">
               @if(!$borrowing->returned_at)
                 <form action="{{ route('borrowings.return', $borrowing) }}" method="POST" class="inline">
                   @csrf
-                  <button class="pill-link pill-success" onclick="return confirm('Mark as returned? Fine will be calculated.')">Return</button>
+                  <button type="submit" class="icon-btn icon-btn-success" title="Mark as returned" onclick="return confirm('Mark as returned? Fine will be calculated.')">
+                    <i class="bi bi-check2-circle"></i>
+                  </button>
                 </form>
               @else
-                <span class="muted">Completed</span>
+                <span class="icon-btn muted" title="Completed">
+                  <i class="bi bi-check-all"></i>
+                </span>
               @endif
             </td>
           </tr>
