@@ -16,6 +16,9 @@
       .field-label { color: rgba(255,255,255,0.85); font-size: .9rem; margin-bottom: 6px; display:block; }
       .input-dark, .select-dark, .textarea-dark { width:100%; color:#fff; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 12px; transition: border-color .2s ease; }
       .input-dark:focus, .select-dark:focus, .textarea-dark:focus { outline: none; border-color: rgba(255,255,255,0.4); }
+      /* Ensure all dropdowns share the same tone */
+      .select-dark { color-scheme: dark; }
+      .select-dark option { background:#0b0b0b; color:#fff; }
       .btn-white { background: #fff; color:#000; font-weight:600; padding: 10px 14px; border-radius: 10px; }
       .btn-white:hover { filter: brightness(.95); }
       .btn-outline { border:1px solid rgba(255,255,255,0.35); color:#fff; padding: 10px 14px; border-radius: 10px; }

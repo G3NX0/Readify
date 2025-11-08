@@ -11,8 +11,7 @@
     .filter-bar { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
     .input-wrap { position: relative; }
     .input-wrap svg { position:absolute; left:10px; top:50%; transform: translateY(-50%); opacity:.7; }
-    .input-dark, .select-dark { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); color:#fff; border-radius: 10px; padding:10px 12px; }
-    .input-dark { padding-left: 38px; min-width: 260px; }
+    .input-dark { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18); color:#fff; border-radius: 10px; padding:10px 12px; padding-left: 38px; min-width: 260px; }
     .input-dark::placeholder { color: rgba(255,255,255,0.6); }
     .btn-ghost { border:1px solid rgba(255,255,255,0.35); color:#fff; padding:10px 14px; border-radius:10px; }
     .btn-ghost:hover { background: rgba(255,255,255,0.06); }

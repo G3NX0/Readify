@@ -6,8 +6,8 @@
   <form action="{{ route('borrowings.store') }}" method="POST" class="space-y-4 max-w-2xl">
     @csrf
     <div>
-      <label class="block text-sm font-medium text-gray-700">Book</label>
-      <select name="book_id" class="mt-1 w-full rounded border-gray-300" required>
+      <label class="block text-sm font-medium text-gray-300">Book</label>
+      <select name="book_id" class="select-dark mt-1" required>
         <option value="" disabled selected>Select book</option>
         @foreach($books as $book)
           <option value="{{ $book->id }}" @selected(old('book_id') == $book->id)>{{ $book->title }}</option>
@@ -47,4 +47,3 @@
     </div>
   </form>
 @endsection
-

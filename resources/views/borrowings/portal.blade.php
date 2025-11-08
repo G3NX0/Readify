@@ -18,6 +18,9 @@
     .input-field { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); transition: all 0.3s ease; color:#fff; color-scheme: dark; }
     .input-field:focus { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.4); outline: none; }
     .input-field option { background:#0b0b0b; color:#fff; }
+    /* Align dropdown tone with global */
+    .select-dark { color-scheme: dark; }
+    .select-dark option { background:#0b0b0b; color:#fff; }
     .submit-button { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); color: #000000; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 30px rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
     .submit-button:hover:not(:disabled) { background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); box-shadow: 0 0 50px rgba(255,255,255,0.4); transform: translateY(-2px); }
     .record-card { background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
@@ -103,7 +106,7 @@
             @csrf
             <div>
               <label class="block text-sm font-medium" style="color:#fff">Book Category *</label>
-              <select id="categorySelect" class="input-field mt-2 w-full rounded px-3 py-3" style="background: rgba(255,255,255,0.05)" required>
+              <select id="categorySelect" class="select-dark input-field mt-2 w-full rounded px-3 py-3" style="background: rgba(255,255,255,0.05)" required>
                 <option value="">Select a category...</option>
                 @foreach($categories as $cat)
                   <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -112,7 +115,7 @@
             </div>
             <div>
               <label class="block text-sm font-medium" style="color:#fff">Book Title *</label>
-              <select id="bookSelect" name="book_id" class="input-field mt-2 w-full rounded px-3 py-3" required>
+              <select id="bookSelect" name="book_id" class="select-dark input-field mt-2 w-full rounded px-3 py-3" required>
                 <option value="">Select a book...</option>
               </select>
             </div>

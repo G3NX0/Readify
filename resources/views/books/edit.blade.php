@@ -46,8 +46,7 @@
         <label class="block text-sm font-medium text-gray-300 mb-1">Category</label>
         <select 
           name="category_id"
-          class="w-full rounded-lg border border-white/10 bg-black/40 text-gray-100 placeholder-gray-500 px-4 py-2 
-                 focus:ring-2 focus:ring-white/20 focus:border-white/20 transition duration-200 backdrop-blur-md"
+          class="select-dark"
           required
         >
           @foreach($categories as $category)

@@ -49,7 +49,7 @@
       <label class="text-sm text-gray-300 block mb-1">Category</label>
       <select 
         name="category_id" 
-        class="input-field rounded-lg px-3 py-2 w-full text-sm focus:ring-1 focus:ring-gray-400 transition"
+        class="select-dark input-field rounded-lg px-3 py-2 w-full text-sm focus:ring-1 focus:ring-gray-400 transition"
         onchange="this.form.submit()"
       >
         <option value="">All</option>
