@@ -2,7 +2,7 @@
 
 @section('content')
   <style>
-    .table-card { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius: 12px; overflow: hidden; }
+    .table-card { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); backdrop-filter: blur(10px); border-radius: 12px; overflow: hidden; }
     .table-min { width: 100%; border-collapse: separate; border-spacing: 0; }
     .table-min thead th { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.8); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; padding: 12px 16px; }
     .table-min tbody tr { border-bottom: 1px solid rgba(255,255,255,0.08); }

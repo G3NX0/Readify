@@ -7,19 +7,18 @@
   </div>
 
   <style>
-    .table-card { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius: 12px; overflow: hidden; }
+    .table-card { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); backdrop-filter: blur(10px); border-radius: 12px; overflow: hidden; }
     .table-min { width: 100%; border-collapse: separate; border-spacing: 0; }
-    .table-min thead th { background: rgba(255,255,255,0.05); color: rgba(0,0,0,0.7); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; padding: 12px 16px; }
-    .table-min tbody tr { border-bottom: 1px solid rgba(0,0,0,0.06); }
-    .table-min tbody tr:nth-child(even){ background: rgba(0,0,0,0.02); }
-    .table-min tbody td { padding: 14px 16px; color: rgba(0,0,0,0.9); vertical-align: top; }
-    .table-min tbody tr:hover { background: rgba(0,0,0,0.04); }
-    .pill-link { border:1px solid rgba(0,0,0,0.25); color:#111; padding:6px 10px; border-radius: 8px; font-size: .85rem; }
-    .pill-link:hover { background: rgba(0,0,0,0.04); }
-    .pill-danger { border-color: rgba(239,68,68,0.4); color: #b91c1c; }
+    .table-min thead th { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.8); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; padding: 12px 16px; }
+    .table-min tbody tr { border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .table-min tbody td { padding: 14px 16px; color: rgba(255,255,255,0.92); vertical-align: top; }
+    .table-min tbody tr:hover { background: rgba(255,255,255,0.035); }
+    .pill-link { border:1px solid rgba(255,255,255,0.35); color:#fff; padding:6px 10px; border-radius: 8px; font-size: .85rem; }
+    .pill-link:hover { background: rgba(255,255,255,0.06); }
+    .pill-danger { border-color: rgba(239,68,68,0.5); color: #fca5a5; }
     .pill-danger:hover { background: rgba(239,68,68,0.08); }
   </style>
-  <div class="overflow-x-auto table-card bg-white">
+  <div class="overflow-x-auto table-card">
     <table class="table-min">
       <thead>
         <tr>
@@ -49,4 +48,3 @@
 
   <div class="mt-4">{{ $categories->links() }}</div>
 @endsection
-
