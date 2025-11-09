@@ -13,14 +13,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Category extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = [
-        'name',
-    ];
+  protected $fillable = ["name"];
 
-    public function books(): HasMany
-    {
-        return $this->hasMany(Book::class);
-    }
+  public function books(): HasMany
+  {
+    return $this->hasMany(Book::class);
+  }
 }

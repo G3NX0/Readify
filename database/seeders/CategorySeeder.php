@@ -12,15 +12,26 @@ use Illuminate\Database\Seeder;
  */
 class CategorySeeder extends Seeder
 {
-    public function run(): void
-    {
-        $names = [
-            'Fiction','Science','Technology','History','Philosophy','Business','Biography',
-            'Art','Health','Travel','Cooking','Self-Help','Poetry',
-        ];
+  public function run(): void
+  {
+    $names = [
+      "Fiction",
+      "Science",
+      "Technology",
+      "History",
+      "Philosophy",
+      "Business",
+      "Biography",
+      "Art",
+      "Health",
+      "Travel",
+      "Cooking",
+      "Self-Help",
+      "Poetry",
+    ];
 
-        foreach ($names as $name) {
-            Category::firstOrCreate(['name' => $name]);
-        }
+    foreach ($names as $name) {
+      Category::firstOrCreate(["name" => $name]);
     }
+  }
 }

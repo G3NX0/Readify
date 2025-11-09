@@ -5,9 +5,10 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "format": "prettier --plugin=prettier-plugin-blade \"resources/**/*.{blade.php,js,css}\" --write"
+        "format": "prettier --plugin=prettier-plugin-blade --plugin=@prettier/plugin-php \"resources/**/*.{blade.php,js,css}\" \"app/**/*.php\" \"routes/**/*.php\" \"config/**/*.php\" \"database/**/*.php\" \"bootstrap/**/*.php\" \"public/*.php\" --write"
     },
     "devDependencies": {
+        "@prettier/plugin-php": "^0.24.0",
         "@tailwindcss/vite": "^4.0.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",

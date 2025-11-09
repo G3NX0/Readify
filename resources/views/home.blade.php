@@ -195,7 +195,7 @@
                 class="stats-number"
                 style="font-size: 48px; font-weight: 800; margin-bottom: 8px"
               >
-                100+
+                700+
               </div>
               <div style="color: #888888; font-size: 16px">Books Managed</div>
             </div>
@@ -204,7 +204,7 @@
                 class="stats-number"
                 style="font-size: 48px; font-weight: 800; margin-bottom: 8px"
               >
-                10
+                6
               </div>
               <div style="color: #888888; font-size: 16px">categories</div>
             </div>

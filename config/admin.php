@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'password' => env('ADMIN_PASSWORD', 'secret'),
+  "password" => env("ADMIN_PASSWORD", "secret"),
 ];

@@ -14,22 +14,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Book extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = [
-        'category_id',
-        'title',
-        'author',
-        'synopsis',
-    ];
+  protected $fillable = ["category_id", "title", "author", "synopsis"];
 
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
-    }
+  public function category(): BelongsTo
+  {
+    return $this->belongsTo(Category::class);
+  }
 
-    public function borrowings(): HasMany
-    {
-        return $this->hasMany(Borrowing::class);
-    }
+  public function borrowings(): HasMany
+  {
+    return $this->hasMany(Borrowing::class);
+  }
 }

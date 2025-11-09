@@ -7,9 +7,9 @@
   "singleQuote": false,
   "overrides": [
     { "files": "*.blade.php", "options": { "parser": "blade" } },
+    { "files": "*.php", "options": { "parser": "php" } },
     { "files": "*.js", "options": { "parser": "babel" } },
     { "files": "*.css", "options": { "parser": "css" } },
     { "files": "*.json", "options": { "parser": "json" } }
   ]
 }
-
