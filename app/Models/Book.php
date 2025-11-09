@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Model Buku
+ *
+ * Field isian: category_id, title, author (opsional), synopsis.
+ */
 class Book extends Model
 {
     use HasFactory;

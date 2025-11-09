@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Model Peminjaman
+ *
+ * Menghitung denda berdasarkan due_date vs returned_at/now.
+ */
 class Borrowing extends Model
 {
     use HasFactory;
@@ -31,6 +36,11 @@ class Borrowing extends Model
         return $this->belongsTo(Book::class);
     }
 
+    /**
+     * Hitung denda keterlambatan.
+     *
+     * @param int|null $ratePerDay tarif per hari (Rp)
+     */
     public function calculateFine(?int $ratePerDay = null): int
     {
         $ratePerDay = $ratePerDay ?? (int) config('borrowing.fine_per_day', 10000);
