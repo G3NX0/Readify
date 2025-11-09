@@ -147,11 +147,7 @@
         background: transparent;
       }
     </style>
-    <style>
-      @view-transition {
-        navigation: auto;
-      }
-    </style>
+
   </head>
   <body>
     <div class="min-h-full gradient-bg">
@@ -160,8 +156,8 @@
       <section id="home" class="hero-gradient" style="padding: 120px 24px 80px; text-align: center; position: relative; overflow: hidden;">
         <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 2">
           <div class="floating" style="margin-bottom: 32px">
-            <h1 class="text-glow" style="font-size: 56px; font-weight: 800; color: #ffffff; margin: 0 0 24px 0; line-height: 1.1; letter-spacing: -0.02em;">Readify — Sistem Manajemen Perpustakaan Modern</h1>
-            <p style="font-size: 20px; color: #888888; margin: 0 0 40px 0; max-width: 720px; margin-left: auto; margin-right: auto; line-height: 1.6;">Kelola koleksi buku, katalog publik, proses peminjaman & pengembalian, serta denda harian lewat panel admin yang sederhana dan cepat.</p>
+            <h1 class="text-glow" style="font-size: 56px; font-weight: 800; color: #ffffff; margin: 0 0 24px 0; line-height: 1.1; letter-spacing: -0.02em;">Baca Lebih Banyak, Bertumbuh Lebih Jauh</h1>
+            <p style="font-size: 20px; color: #888888; margin: 0 0 40px 0; max-width: 820px; margin-left: auto; margin-right: auto; line-height: 1.6;">Di Readify, kami percaya setiap halaman dapat membuka cara pandang baru. Temukan, pinjam, dan nikmati buku-buku pilihan dalam pengalaman yang profesional, rapi, dan minimalis—agar fokus Anda tinggal membaca.</p>
           </div>
           <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px;">
             <a href="{{ route('borrow.portal') }}" class="cta-button hover-glow" style="padding: 16px 32px; border-radius: 12px; font-weight: 600; font-size: 18px; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">Mulai Pinjam</a>
@@ -181,6 +177,13 @@
               Watch Demo
             </button>
           </div>
+          <!-- Inspirational Strip -->
+          <div class="glass-effect" style="max-width: 900px; margin: 0 auto 40px; border-radius: 14px; padding: 16px 22px;">
+            <p style="margin: 0; color: #d1d5db; font-size: 16px; line-height: 1.7;">
+              “Perpustakaan yang baik menyimpan jawaban. Perpustakaan yang hebat memancing pertanyaan.” — di Readify, kami merapikan urusan teknis, agar Anda bisa larut dalam cerita dan pengetahuan.
+            </p>
+          </div>
+
           <!-- Stats -->
           <div
             style="
@@ -197,7 +200,7 @@
               >
                 700+
               </div>
-              <div style="color: #888888; font-size: 16px">Books Managed</div>
+              <div style="color: #888888; font-size: 16px">Buku Terkelola</div>
             </div>
             <div style="text-align: center">
               <div
@@ -206,7 +209,7 @@
               >
                 6
               </div>
-              <div style="color: #888888; font-size: 16px">categories</div>
+              <div style="color: #888888; font-size: 16px">Kategori</div>
             </div>
             <div style="text-align: center">
               <div
@@ -224,7 +227,7 @@
               >
                 24/7
               </div>
-              <div style="color: #888888; font-size: 16px">Support</div>
+              <div style="color: #888888; font-size: 16px">Dukungan</div>
             </div>
           </div>
         </div>
@@ -279,12 +282,9 @@
                 text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
               "
             >
-              Fitur Utama
+              Mengapa Readify
             </h2>
-            <p style="font-size: 18px; color: #888888; max-width: 720px; margin: 0 auto">
-              Semua yang Anda butuhkan untuk mengelola perpustakaan dengan efisien—dari katalog
-              hingga peminjaman dan denda.
-            </p>
+            <p style="font-size: 18px; color: #888888; max-width: 720px; margin: 0 auto">Pengalaman membaca yang tenang, alur peminjaman sederhana, dan tampilan yang profesional—agar fokus Anda tidak terpecah.</p>
           </div>
           <div
             style="

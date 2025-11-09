@@ -1,0 +1,89 @@
+@extends('layouts.base', ['title' => 'Profil'])
+
+@section('content')
+  <style>
+    .glass { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); backdrop-filter: blur(16px); }
+  </style>
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-2xl font-semibold text-white mb-4">Profil</h1>
+
+    @if($errors->any())
+      <div class="mb-4 rounded border border-red-300 bg-red-50 p-3 text-red-800">{{ $errors->first() }}</div>
+    @endif
+
+    <div class="glass rounded-xl p-6 text-white">
+      <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @csrf
+
+        <div class="col-span-1 md:col-span-2 flex items-center gap-4 mb-2">
+          <div class="w-16 h-16 rounded-full overflow-hidden bg-white/10 border border-white/20 flex items-center justify-center">
+            <img id="profilePreview" src="{{ route('profile.photo') }}?v={{ $user->updated_at?->timestamp }}" alt="PP" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,{{ base64_encode("<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='%230b0b0b'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' fill='%23fff' font-family='Arial' font-size='96'>" . strtoupper(substr($user->name ?? 'U', 0, 1)) . "</text></svg>") }}'" />
+          </div>
+          <div>
+            <label class="block text-sm mb-1">Foto Profil</label>
+            <input id="photoInput" type="file" name="photo" accept="image/*" class="hidden" onchange="(function(i,n,img){ if(i && i.files && i.files[0]){ n.textContent=i.files[0].name; const url=URL.createObjectURL(i.files[0]); img.src=url; img.onload=function(){URL.revokeObjectURL(url)} } })(this, document.getElementById('photoFilename'), document.getElementById('profilePreview'))" />
+            <label for="photoInput" class="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-white text-black text-sm font-medium cursor-pointer">
+              Pilih File
+            </label>
+            <span id="photoFilename" class="ml-2 text-xs text-gray-300">Belum ada file</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm mb-1">Nama</label>
+          <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full rounded border border-gray-500 bg-transparent px-3 py-2" required />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Username</label>
+          <input type="text" name="username" value="{{ old('username', $user->username) }}" class="w-full rounded border border-gray-500 bg-transparent px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Email</label>
+          <input type="email" name="email" value="{{ old('email', $user->email) }}" class="w-full rounded border border-gray-500 bg-transparent px-3 py-2" required />
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Password Baru (opsional)</label>
+          <input type="password" name="password" class="w-full rounded border border-gray-500 bg-transparent px-3 py-2" />
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm mb-1">Konfirmasi Password</label>
+          <input type="password" name="password_confirmation" class="w-full rounded border border-gray-500 bg-transparent px-3 py-2" />
+        </div>
+        <div class="md:col-span-2 flex items-center justify-end gap-2">
+          <a href="/" class="text-sm text-gray-300 hover:text-white">Kembali</a>
+          <button class="rounded bg-white px-4 py-2 text-black font-semibold">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+@endsection
+
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('photoInput');
+    const nameEl = document.getElementById('photoFilename');
+    const img = document.getElementById('profilePreview');
+    if (!input || !nameEl || !img) return;
+    input.addEventListener('change', () => {
+      const f = input.files && input.files[0];
+      if (f) {
+        // Batasi 4MB untuk mencegah 413 di server
+        const MAX = 4 * 1024 * 1024;
+        if (f.size > MAX) {
+          alert('Ukuran file terlalu besar. Maksimal 4MB.');
+          input.value = '';
+          nameEl.textContent = 'Belum ada file';
+          return;
+        }
+        nameEl.textContent = f.name;
+        const url = URL.createObjectURL(f);
+        img.src = url;
+        img.onload = () => URL.revokeObjectURL(url);
+      } else {
+        nameEl.textContent = 'Belum ada file';
+      }
+    });
+  });
+  </script>
+@endpush

@@ -84,12 +84,18 @@ class BorrowingController extends Controller
    */
   public function store(Request $request): RedirectResponse
   {
-    $validated = $request->validate([
+    $isAdmin = auth()->check() && (((auth()->user()->role ?? null) === 'admin') || strcasecmp((string) (auth()->user()->email ?? ''), 'admin@gmail.com') === 0);
+
+    $rules = [
       "book_id" => ["required", "exists:books,id"],
-      "borrower_name" => ["required", "string", "max:255"],
       "borrowed_at" => ["required", "date"],
       "due_date" => ["required", "date", "after_or_equal:borrowed_at"],
-    ]);
+    ];
+    if ($isAdmin) {
+      $rules["borrower_name"] = ["required", "string", "max:255"];
+    }
+
+    $validated = $request->validate($rules);
 
     // If the book is currently borrowed (no returned_at), prevent borrowing again
     $activeExists = Borrowing::where("book_id", $validated["book_id"])
@@ -101,8 +107,18 @@ class BorrowingController extends Controller
         ->withInput();
     }
 
-    Borrowing::create($validated + ["fine_amount" => 0]);
-    if (session("is_admin")) {
+    $borrowerName = $isAdmin && $request->filled('borrower_name')
+      ? (string) $request->string('borrower_name')
+      : (string) (auth()->user()->name ?? 'Pengguna');
+
+    Borrowing::create([
+      "book_id" => $validated["book_id"],
+      "borrower_name" => $borrowerName,
+      "borrowed_at" => $validated["borrowed_at"],
+      "due_date" => $validated["due_date"],
+      "fine_amount" => 0,
+    ]);
+    if (auth()->check() && (auth()->user()->role ?? 'user') === 'admin') {
       return redirect()->route("borrowings.index")->with("status", "Borrowing recorded");
     }
     return redirect()->route("borrow.portal")->with("status", "Berhasil meminjam buku.");

@@ -132,7 +132,7 @@
     </header>
     <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       @if (session("status"))
-        <div class="mb-4 rounded border border-green-200 bg-green-50 p-3 text-green-800">
+        <div class="mb-4 rounded border border-white/20 bg-black/60 p-3 text-white">
           {{ session("status") }}
         </div>
       @endif
@@ -141,4 +141,6 @@
       @yield("content")
     </main>
   </body>
+  @stack('scripts')
+  @yield('scripts')
 </html>

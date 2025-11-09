@@ -185,6 +185,11 @@
     <div class="min-h-full gradient-bg">
       <!-- Navigation (not sticky/fixed) -->
       @include("partials.navbar")
+      @php
+        $isLogged = auth()->check();
+        $user = $isLogged ? auth()->user() : null;
+        $isAdmin = $isLogged && ((($user->role ?? null) === 'admin') || strcasecmp((string) ($user->email ?? ''), 'admin@gmail.com') === 0);
+      @endphp
 
       <!-- Header -->
       <header style="padding: 40px 24px 20px; text-align: center; position: relative">
@@ -200,26 +205,6 @@
               "
             >
               <a href="/" style="color: #ccc; text-decoration: none">← Back</a>
-              @if (session("is_admin"))
-                <form action="{{ route("admin.logout") }}" method="POST">
-                  @csrf
-                  <button
-                    style="
-                      background: rgba(255, 255, 255, 0.1);
-                      border: 1px solid rgba(255, 255, 255, 0.2);
-                      color: #fff;
-                      padding: 6px 12px;
-                      border-radius: 6px;
-                    "
-                  >
-                    Logout
-                  </button>
-                </form>
-              @else
-                <a href="{{ route("admin.login") }}" style="color: #fff; text-decoration: none">
-                  Admin Login
-                </a>
-              @endif
             </div>
             <h1
               class="text-glow"
@@ -337,12 +322,11 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium" style="color: #fff">Borrower Name *</label>
+                <label class="block text-sm font-medium" style="color: #fff">Borrower</label>
                 <input
-                  name="borrower_name"
                   class="input-field mt-2 w-full rounded px-3 py-3"
-                  placeholder="Enter your name"
-                  required
+                  value="{{ auth()->user()->name }}"
+                  readonly
                 />
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -495,7 +479,7 @@
                       >
                         {{ $borrowing->returned_at ? "returned" : "borrowed" }}
                       </span>
-                      @if (! $borrowing->returned_at && session("is_admin"))
+                      @if (! $borrowing->returned_at && $isAdmin)
                         <form
                           action="{{ route("borrowings.return", $borrowing) }}"
                           method="POST"

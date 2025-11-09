@@ -4,21 +4,24 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BorrowingController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ProfileController;
 
-Route::get("/", function () {
-  return view("home");
-});
+Route::get('/', function () {
+    return auth()->check() ? view('home') : view('onboard');
+})->name('onboard');
 
-// Autentikasi Admin (santai tapi tetap rapi)
-Route::get("admin/login", [AdminController::class, "showLogin"])->name("admin.login");
-Route::post("admin/login", [AdminController::class, "login"])
-  ->middleware("throttle:5,1")
-  ->name("admin.login.post");
-Route::post("admin/logout", [AdminController::class, "logout"])->name("admin.logout");
+// Autentikasi bawaan (login/register/logout)
+Route::get('login', [LoginController::class, 'create'])->name('login');
+Route::post('login', [LoginController::class, 'store'])->name('login.store');
+Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+
+Route::get('register', [RegisterController::class, 'create'])->name('register');
+Route::post('register', [RegisterController::class, 'store'])->name('register.store');
 
 // Khusus Admin (fitur manajerial)
-Route::middleware("admin")->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
   // CRUD Kategori — bikin, ubah, hapus (inti pengelompokan)
   Route::resource("categories", CategoryController::class)->except(["show"]);
 
@@ -38,9 +41,18 @@ Route::middleware("admin")->group(function () {
   );
 });
 
-// Publik (semua orang bisa mengakses)
-Route::get("catalog", [BookController::class, "catalog"])->name("books.catalog");
-Route::get("books/{book}", [BookController::class, "show"])->name("books.show");
-// Portal Peminjaman (Get Started) — biar cepat pinjam
-Route::get("borrow", [BorrowingController::class, "portal"])->name("borrow.portal");
-Route::post("borrowings", [BorrowingController::class, "store"])->name("borrowings.store");
+// Area pengguna (harus login terlebih dahulu)
+Route::middleware('auth')->group(function () {
+    Route::get('catalog', [BookController::class, 'catalog'])->name('books.catalog');
+    Route::get('books/{book}', [BookController::class, 'show'])->name('books.show');
+    // Portal Peminjaman (Get Started) — biar cepat pinjam
+    Route::get('borrow', [BorrowingController::class, 'portal'])->name('borrow.portal');
+    Route::post('borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
+
+    // Profil pengguna
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+// Avatar profil bisa diakses publik; jika belum login, tampilkan placeholder
+Route::get('profile/photo', [ProfileController::class, 'photo'])->name('profile.photo');

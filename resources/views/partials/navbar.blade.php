@@ -64,28 +64,48 @@
         <a href="/" class="font-bold text-white text-xl">Readify</a>
       </div>
 
-      <!-- Desktop Nav -->
-      <div class="navbar-links hidden md:flex items-center gap-8">
-        <a class="nav-link" href="/">Home</a>
-        <a class="nav-link" href="{{ route("books.catalog") }}">Catalog</a>
-        <a class="nav-link" href="{{ route("borrow.portal") }}">Borrow</a>
-        @if (session("is_admin"))
-          <a class="nav-link" href="{{ route("books.index") }}">Books</a>
-          <a class="nav-link" href="{{ route("categories.index") }}">Categories</a>
-          <a class="nav-link" href="{{ route("borrowings.index") }}">Borrowings</a>
-          <form action="{{ route("admin.logout") }}" method="POST">
-            @csrf
-            <button class="nav-link" style="background: none; border: none; padding: 0">
-              Logout
-            </button>
-          </form>
-        @else
-          <a class="nav-link" href="{{ route("admin.login") }}">Admin Login</a>
+      <!-- Right group: nav items + avatar (desktop) and burger (mobile) -->
+      <div class="flex items-center gap-6">
+        @php
+          $isLogged = auth()->check();
+          $user = $isLogged ? auth()->user() : null;
+          $isAdmin = $isLogged && ((($user->role ?? null) === 'admin') || strcasecmp((string) ($user->email ?? ''), 'admin@gmail.com') === 0);
+        @endphp
+        <div class="hidden md:flex items-center gap-6">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="{{ route("books.catalog") }}">Catalog</a>
+          <a class="nav-link" href="{{ route("borrow.portal") }}">Borrow</a>
+          @if ($isAdmin)
+            <a class="nav-link" href="{{ route("books.index") }}">Books</a>
+            <a class="nav-link" href="{{ route("categories.index") }}">Categories</a>
+            <a class="nav-link" href="{{ route("borrowings.index") }}">Borrowings</a>
+          @endif
+          @if ($isLogged)
+            <form action="{{ route('logout') }}" method="POST">
+              @csrf
+              <button class="nav-link" style="background: none; border: none; padding: 0">Logout</button>
+            </form>
+          @else
+            <a class="nav-link" href="{{ route('login') }}">Login</a>
+            <a class="nav-link" href="{{ route('register') }}">Register</a>
+          @endif
+        </div>
+        @if (auth()->check())
+          @php
+            $initial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
+            $fallbackSvg = "<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect width='100%' height='100%' fill='%230b0b0b'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' fill='%23fff' font-family='Arial' font-size='28'>" . $initial . "</text></svg>";
+            $fallbackData = 'data:image/svg+xml;base64,' . base64_encode($fallbackSvg);
+          @endphp
+          <a href="{{ route('profile.edit') }}" class="hidden md:inline-flex" title="Profile">
+            <img
+              src="{{ route('profile.photo') }}?v={{ auth()->user()->updated_at?->timestamp }}"
+              alt="Profile"
+              style="width: 36px; height: 36px; border-radius: 9999px; object-fit: cover; border: 1px solid rgba(255,255,255,0.3);"
+              onerror="this.onerror=null; this.src='{{ $fallbackData }}'"
+            />
+          </a>
         @endif
-      </div>
-
-      <!-- Mobile button -->
-      <button type="button" class="md:hidden text-white" aria-label="Open menu" onclick="(function(){ const m=document.getElementById('navMobileMenu'); const o=document.getElementById('navOverlay'); m&&m.classList.add('active'); o&&o.classList.add('active'); try{document.body.style.overflow='hidden';}catch(e){} })()">
+        <button type="button" class="md:hidden text-white" aria-label="Open menu" onclick="(function(){ const m=document.getElementById('navMobileMenu'); const o=document.getElementById('navOverlay'); m&&m.classList.add('active'); o&&o.classList.add('active'); try{document.body.style.overflow='hidden';}catch(e){} })()">
         <svg
           width="28"
           height="28"
@@ -121,7 +141,8 @@
             stroke-linecap="round"
           />
         </svg>
-      </button>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -152,21 +173,28 @@
       <a class="nav-link" href="/" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Home</a>
       <a class="nav-link" href="{{ route('books.catalog') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Catalog</a>
       <a class="nav-link" href="{{ route('borrow.portal') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Borrow</a>
-      @if (session("is_admin"))
+      @php
+        $isLogged = auth()->check();
+        $user = $isLogged ? auth()->user() : null;
+        $isAdmin = $isLogged && ((($user->role ?? null) === 'admin') || strcasecmp((string) ($user->email ?? ''), 'admin@gmail.com') === 0);
+      @endphp
+      @if ($isAdmin)
         <a class="nav-link" href="{{ route('books.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Books</a>
         <a class="nav-link" href="{{ route('categories.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Categories</a>
         <a class="nav-link" href="{{ route('borrowings.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Borrowings</a>
-        <form action="{{ route("admin.logout") }}" method="POST">
+        <form action="{{ route('logout') }}" method="POST">
           @csrf
-          <button
-            class="nav-link"
-            style="text-align: left; background: none; border: none; padding: 0"
-          >
-            Logout
-          </button>
+          <button class="nav-link" style="text-align: left; background: none; border: none; padding: 0">Logout</button>
+        </form>
+      @elseif($isLogged)
+        <a class="nav-link" href="{{ route('profile.edit') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Profile</a>
+        <form action="{{ route('logout') }}" method="POST">
+          @csrf
+          <button class="nav-link" style="text-align: left; background: none; border: none; padding: 0">Logout</button>
         </form>
       @else
-        <a class="nav-link" href="{{ route('admin.login') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Admin Login</a>
+        <a class="nav-link" href="{{ route('login') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Login</a>
+        <a class="nav-link" href="{{ route('register') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Register</a>
       @endif
     </div>
   </div>
