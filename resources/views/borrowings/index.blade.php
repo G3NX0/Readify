@@ -119,7 +119,12 @@
           <tr>
             <td class="font-semibold">{{ $borrowing->book->title ?? "-" }}</td>
             <td class="muted">{{ $borrowing->borrower_name }}</td>
-            <td class="muted">{{ $borrowing->borrowed_at?->format("Y-m-d") }}</td>
+            <td class="muted">
+              {{ $borrowing->borrowed_at?->format("Y-m-d") }}
+              @if($borrowing->return_requested_at && ! $borrowing->returned_at)
+                <span class="ml-2 inline-block px-2 py-0.5 rounded text-xs" style="background: rgba(234,179,8,0.18); border:1px solid rgba(234,179,8,0.35); color:#fde68a;">RETURN REQUEST</span>
+              @endif
+            </td>
             <td class="muted">{{ $borrowing->due_date?->format("Y-m-d") }}</td>
             <td class="muted">{{ $borrowing->returned_at?->format("Y-m-d") ?? "—" }}</td>
             <td class="muted">

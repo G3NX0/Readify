@@ -91,23 +91,29 @@
       <h2 class="text-white font-semibold text-lg mb-2">Synopsis</h2>
       <p class="text-gray-200 leading-relaxed">{{ $book->synopsis }}</p>
 
-      <div class="mt-6">
-        @if ($isUnavailable)
-          <button class="submit-button rounded px-4 py-2 opacity-60 cursor-not-allowed" disabled>
-            Borrow This Book
-          </button>
-          <p class="text-sm text-gray-300 mt-2">
-            This book is currently borrowed. Please check back later.
-          </p>
-        @else
-          <a
-            href="{{ route("borrow.portal", ["category_id" => $book->category_id, "book_id" => $book->id]) }}"
-            class="submit-button rounded px-4 py-2"
-          >
-            Borrow This Book
-          </a>
-        @endif
-      </div>
+  <div class="mt-6">
+    @if ($isUnavailable)
+      <button class="submit-button rounded px-4 py-2 opacity-60 cursor-not-allowed" disabled>
+        Borrow This Book
+      </button>
+      <p class="text-sm text-gray-300 mt-2">
+        This book is currently borrowed. Please check back later.
+      </p>
+    @else
+      <a
+        href="{{ route("borrow.portal", ["category_id" => $book->category_id, "book_id" => $book->id]) }}"
+        class="submit-button rounded px-4 py-2"
+      >
+        Borrow This Book
+      </a>
+    @endif
+    @auth
+      <form action="{{ route('favorites.store', $book) }}" method="POST" class="inline-block ml-3">
+        @csrf
+        <button class="btn-outline" style="border-radius:10px; padding:8px 12px">Tambah ke Favorit</button>
+      </form>
+    @endauth
+  </div>
     </div>
   </div>
 @endsection

@@ -75,10 +75,14 @@
           <a class="nav-link" href="/">Home</a>
           <a class="nav-link" href="{{ route("books.catalog") }}">Catalog</a>
           <a class="nav-link" href="{{ route("borrow.portal") }}">Borrow</a>
+          @if ($isLogged)
+            <a class="nav-link" href="{{ route('returns.form') }}" title="Returns">Return</a>
+          @endif
           @if ($isAdmin)
             <a class="nav-link" href="{{ route("books.index") }}">Books</a>
             <a class="nav-link" href="{{ route("categories.index") }}">Categories</a>
             <a class="nav-link" href="{{ route("borrowings.index") }}">Borrowings</a>
+            <a class="nav-link" href="{{ route('analytics.index') }}">Analytics</a>
           @endif
           @if ($isLogged)
             <form action="{{ route('logout') }}" method="POST">
@@ -91,6 +95,12 @@
           @endif
         </div>
         @if (auth()->check())
+          <!-- Favorites icon-only, placed just left of avatar -->
+          <a href="{{ route('favorites.index') }}" class="hidden md:inline-flex text-white" aria-label="Favorites" title="Favorites" style="opacity:.95">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21s-6.716-4.297-9.333-8.06C1.49 11.272 1 9.922 1 8.5 1 6.015 3.015 4 5.5 4c1.54 0 2.938.74 3.82 1.88L12 7.94l2.68-2.06C15.562 4.74 16.96 4 18.5 4 20.985 4 23 6.015 23 8.5c0 1.422-.489 2.772-1.667 4.44C18.716 16.703 12 21 12 21z" stroke="currentColor" stroke-width="1.6" fill="none"/>
+            </svg>
+          </a>
           @php
             $initial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
             $fallbackSvg = "<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect width='100%' height='100%' fill='%230b0b0b'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' fill='%23fff' font-family='Arial' font-size='28'>" . $initial . "</text></svg>";

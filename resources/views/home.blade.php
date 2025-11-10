@@ -150,6 +150,7 @@
 
   </head>
   <body>
+    @include("partials.splash")
     <div class="min-h-full gradient-bg">
       @include("partials.navbar")
       <!-- Hero Section -->

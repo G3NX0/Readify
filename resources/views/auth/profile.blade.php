@@ -4,7 +4,7 @@
   <style>
     .glass { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); backdrop-filter: blur(16px); }
   </style>
-  <div class="max-w-3xl mx-auto">
+  <div class="max-w-5xl mx-auto">
     <h1 class="text-2xl font-semibold text-white mb-4">Profil</h1>
 
     @if($errors->any())
@@ -54,6 +54,59 @@
           <button class="rounded bg-white px-4 py-2 text-black font-semibold">Simpan</button>
         </div>
       </form>
+    </div>
+
+    <div class="glass rounded-xl p-6 text-white mt-6">
+      <h2 class="text-lg font-semibold mb-3">Riwayat Peminjaman</h2>
+      @php
+        $user = auth()->user();
+        $history = \App\Models\Borrowing::with('book')
+          ->when($user, function ($q) use ($user) {
+            $q->where(function ($sub) use ($user) {
+              $sub->where('user_id', $user->id)
+                  ->orWhere('borrower_name', (string) $user->name);
+            });
+          })
+          ->orderByDesc('created_at')
+          ->limit(50)
+          ->get();
+      @endphp
+      @if ($history->isEmpty())
+        <p class="text-gray-300">Belum ada riwayat.</p>
+      @else
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-white/80">
+                <th class="text-left py-2">Buku</th>
+                <th class="text-left py-2">Dipinjam</th>
+                <th class="text-left py-2">Jatuh Tempo</th>
+                <th class="text-left py-2">Dikembalikan</th>
+                <th class="text-left py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($history as $h)
+                <tr class="border-t border-white/10">
+                  <td class="py-2">{{ $h->book->title ?? '—' }}</td>
+                  <td class="py-2">{{ $h->borrowed_at?->format('Y-m-d') }}</td>
+                  <td class="py-2">{{ $h->due_date?->format('Y-m-d') }}</td>
+                  <td class="py-2">{{ $h->returned_at?->format('Y-m-d') ?? '—' }}</td>
+                  <td class="py-2">
+                    @if ($h->returned_at)
+                      <span class="text-green-400">returned</span>
+                    @elseif($h->return_requested_at)
+                      <span class="text-yellow-300">return requested</span>
+                    @else
+                      <span class="text-orange-300">borrowed</span>
+                    @endif
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      @endif
     </div>
   </div>
 @endsection

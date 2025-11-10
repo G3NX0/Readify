@@ -127,6 +127,7 @@
     />
   </head>
   <body class="min-h-screen gradient-bg">
+    @include("partials.splash")
     <header>
       @include("partials.navbar")
     </header>

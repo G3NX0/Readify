@@ -182,6 +182,7 @@
     </style>
   </head>
   <body>
+    @include("partials.splash")
     <div class="min-h-full gradient-bg">
       <!-- Navigation (not sticky/fixed) -->
       @include("partials.navbar")

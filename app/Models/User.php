@@ -45,4 +45,17 @@ class User extends Authenticatable
       "password" => "hashed",
     ];
   }
+
+  // Relasi: favorit buku
+  public function favoriteBooks()
+  {
+    return $this->belongsToMany(\App\Models\Book::class, 'favorites')
+      ->withTimestamps();
+  }
+
+  // Relasi: riwayat peminjaman
+  public function borrowings()
+  {
+    return $this->hasMany(\App\Models\Borrowing::class);
+  }
 }

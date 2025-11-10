@@ -23,17 +23,27 @@ class Borrowing extends Model
     "due_date",
     "returned_at",
     "fine_amount",
+    // Tambahan untuk fitur baru
+    "user_id",
+    "return_requested_at",
+    "return_note",
   ];
 
   protected $casts = [
     "borrowed_at" => "date",
     "due_date" => "date",
     "returned_at" => "date",
+    "return_requested_at" => "datetime",
   ];
 
   public function book(): BelongsTo
   {
     return $this->belongsTo(Book::class);
+  }
+
+  public function user(): BelongsTo
+  {
+    return $this->belongsTo(User::class);
   }
 
   /**

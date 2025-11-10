@@ -24,6 +24,7 @@
     </style>
   </head>
   <body class="min-h-screen gradient-bg">
+    @include("partials.splash")
     <main class="min-h-screen grid place-items-center px-6">
       <div class="glass max-w-xl w-full rounded-2xl p-8 text-white text-center">
         <h1 class="text-3xl font-extrabold mb-2">Selamat Datang di Readify</h1>
@@ -37,4 +38,3 @@
     </main>
   </body>
  </html>
-

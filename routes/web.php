@@ -7,6 +7,8 @@ use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\AnalyticsController;
 
 Route::get('/', function () {
     return auth()->check() ? view('home') : view('onboard');
@@ -39,6 +41,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
   Route::post("borrowings/{borrowing}/return", [BorrowingController::class, "returnBook"])->name(
     "borrowings.return",
   );
+  // Analytics (admin)
+  Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+  Route::get('analytics/data', [AnalyticsController::class, 'data'])->name('analytics.data');
+  Route::get('analytics/summary', [AnalyticsController::class, 'summary'])->name('analytics.summary');
 });
 
 // Area pengguna (harus login terlebih dahulu)
@@ -49,9 +55,18 @@ Route::middleware('auth')->group(function () {
     Route::get('borrow', [BorrowingController::class, 'portal'])->name('borrow.portal');
     Route::post('borrowings', [BorrowingController::class, 'store'])->name('borrowings.store');
 
+    // Pengembalian oleh pengguna (request)
+    Route::get('returns', [BorrowingController::class, 'returnForm'])->name('returns.form');
+    Route::post('returns', [BorrowingController::class, 'requestReturn'])->name('returns.request');
+
     // Profil pengguna
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Favorit
+    Route::get('favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('favorites/{book}', [FavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('favorites/{book}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
 // Avatar profil bisa diakses publik; jika belum login, tampilkan placeholder

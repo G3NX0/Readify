@@ -22,24 +22,27 @@ class RoleMiddleware
         }
 
         $hasRole = Schema::hasColumn('users', 'role');
-        if ($hasRole) {
-            if (($user->role ?? 'user') !== $role) {
-                return redirect()->route('login')->with('status', 'Silakan login sebagai ' . $role . '.');
-            }
-            return $next($request);
-        }
+        $isAdminByIdentity = strcasecmp((string) ($user->email ?? ''), 'admin@gmail.com') === 0
+            || strcasecmp((string) ($user->username ?? ''), 'admin') === 0;
 
-        // Fallback jika kolom 'role' belum ada di DB:
-        // anggap admin jika email adalah admin@gmail.com
         if ($role === 'admin') {
-            $isAdmin = strcasecmp((string) ($user->email ?? ''), 'admin@gmail.com') === 0
-                || strcasecmp((string) ($user->username ?? ''), 'admin') === 0;
-            if ($isAdmin) {
+            // Jika ada kolom role dan sudah benar, lolos.
+            if ($hasRole && (($user->role ?? 'user') === 'admin')) {
+                return $next($request);
+            }
+            // Tetap izinkan admin berdasarkan identitas email/username walau kolom role ada namun belum terset.
+            if ($isAdminByIdentity) {
                 return $next($request);
             }
             return redirect()->route('login')->with('status', 'Silakan login sebagai ' . $role . '.');
         }
-        // Untuk role lain, izinkan saja jika login
+
+        // Untuk role lain, jika kolom tersedia maka patuhi nilainya; jika tidak, izinkan saja selama login.
+        if ($hasRole) {
+            if (($user->role ?? 'user') !== $role) {
+                return redirect()->route('login')->with('status', 'Silakan login sebagai ' . $role . '.');
+            }
+        }
         return $next($request);
     }
 }

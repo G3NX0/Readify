@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
       'admin' => \App\Http\Middleware\AdminMiddleware::class,
       'role' => \App\Http\Middleware\RoleMiddleware::class,
     ]);
+    // Auto-provision DB (create + migrate + seed) saat belum tersedia
+    $middleware->prepend(\App\Http\Middleware\AutoProvisionDatabase::class);
     // Jalankan pemeriksaan ukuran upload sebelum middleware bawaan ValidatePostSize
     $middleware->prepend(\App\Http\Middleware\PreValidatePostSize::class);
 

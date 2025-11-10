@@ -71,6 +71,70 @@ class BorrowingController extends Controller
   }
 
   /**
+   * Form pengembalian untuk pengguna: pilih dari peminjaman aktif miliknya.
+   */
+  public function returnForm(Request $request): View
+  {
+    $user = $request->user();
+    $activeMine = Borrowing::with('book')
+      ->whereNull('returned_at')
+      ->when($user, function ($q) use ($user) {
+        $q->where(function ($sub) use ($user) {
+          $sub->where('user_id', $user->id)
+              ->orWhere('borrower_name', (string) $user->name);
+        });
+      })
+      ->orderByDesc('created_at')
+      ->get();
+    // Jika admin, tampilkan daftar permintaan pengembalian yang menunggu konfirmasi
+    $isAdmin = $user && ((($user->role ?? null) === 'admin') || strcasecmp((string) ($user->email ?? ''), 'admin@gmail.com') === 0);
+    $pendingReturns = collect();
+    if ($isAdmin) {
+      $pendingReturns = Borrowing::with('book', 'user')
+        ->whereNotNull('return_requested_at')
+        ->whereNull('returned_at')
+        ->orderByDesc('return_requested_at')
+        ->limit(50)
+        ->get();
+    }
+    return view('borrowings.return', compact('activeMine', 'pendingReturns', 'isAdmin'));
+  }
+
+  /**
+   * Ajukan permintaan pengembalian; admin yang mengonfirmasi.
+   */
+  public function requestReturn(Request $request): RedirectResponse
+  {
+    $validated = $request->validate([
+      'borrowing_id' => ['required', 'exists:borrowings,id'],
+      'return_note' => ['nullable', 'string', 'max:255'],
+    ]);
+
+    $borrowing = Borrowing::findOrFail($validated['borrowing_id']);
+    $user = $request->user();
+    // Validasi kepemilikan: user_id cocok ATAU borrower_name sama (untuk data lama)
+    $owned = false;
+    if ($user) {
+      if ($borrowing->user_id) {
+        $owned = (int) $borrowing->user_id === (int) $user->id;
+      } else {
+        $owned = strcasecmp((string) ($borrowing->borrower_name ?? ''), (string) ($user->name ?? '')) === 0;
+      }
+    }
+    if (! $owned) {
+      return back()->withErrors(['borrowing_id' => 'Tidak valid: peminjaman bukan milik Anda.']);
+    }
+    if ($borrowing->returned_at) {
+      return back()->withErrors(['borrowing_id' => 'Catatan ini sudah dikembalikan.']);
+    }
+    $borrowing->return_requested_at = now();
+    $borrowing->return_note = $validated['return_note'] ?? null;
+    $borrowing->save();
+
+    return redirect()->route('returns.form')->with('status', 'Permintaan pengembalian dikirim.');
+  }
+
+  /**
    * Form peminjaman (admin membuat catatan).
    */
   public function create(): View
@@ -107,15 +171,14 @@ class BorrowingController extends Controller
         ->withInput();
     }
 
-    $borrowerName = $isAdmin && $request->filled('borrower_name')
-      ? (string) $request->string('borrower_name')
-      : (string) (auth()->user()->name ?? 'Pengguna');
+    $borrowerName = $isAdmin && $request->filled('borrower_name') ? (string) $request->string('borrower_name') : (string) (auth()->user()->name ?? 'Pengguna');
 
     Borrowing::create([
       "book_id" => $validated["book_id"],
       "borrower_name" => $borrowerName,
       "borrowed_at" => $validated["borrowed_at"],
       "due_date" => $validated["due_date"],
+      "user_id" => auth()->id(),
       "fine_amount" => 0,
     ]);
     if (auth()->check() && (auth()->user()->role ?? 'user') === 'admin') {
