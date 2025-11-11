@@ -163,6 +163,8 @@
           <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px;">
             <a href="{{ route('borrow.portal') }}" class="cta-button hover-glow" style="padding: 16px 32px; border-radius: 12px; font-weight: 600; font-size: 18px; border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">Mulai Pinjam</a>
             <button
+              type="button"
+              onclick="window.homeDemo && window.homeDemo.open()"
               class="glass-effect hover-glow"
               style="
                 padding: 16px 32px;
@@ -891,7 +893,83 @@
       </footer>
     </div>
 
+    <!-- Demo Modal -->
+    <style>
+      .demo-modal { position: fixed; inset:0; background: rgba(0,0,0,0.65); display:flex; align-items:center; justify-content:center; z-index:9999; }
+      .demo-modal.hidden { display:none; }
+      .demo-card { width: min(1000px, 96%); background: rgba(15,15,15,0.95); border:1px solid rgba(255,255,255,0.15); border-radius: 18px; display:flex; flex-direction:row; overflow:hidden; }
+      @media (max-width:767px) { .demo-card { flex-direction:column; } }
+      .demo-sidebar { background: rgba(255,255,255,0.05); padding:16px; display:flex; flex-direction:column; gap:8px; min-width:180px; max-width:210px; }
+      .demo-sidebar button { text-align:left; border:1px solid rgba(255,255,255,0.2); background: transparent; color:#fff; padding:10px; border-radius:10px; cursor:pointer; }
+      .demo-sidebar button.active-demo { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
+      .demo-video { flex:1; padding:20px; }
+      @media (max-width: 767px) {
+        .demo-sidebar { flex-direction:row; flex-wrap:wrap; justify-content:center; min-width:100%; max-width:none; }
+        .demo-sidebar button { flex:1 1 45%; text-align:center; }
+        .demo-video { padding:16px; }
+      }
+    </style>
+    <div id="demoModal" class="demo-modal hidden">
+      <div class="demo-card">
+        <div class="demo-sidebar">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-white font-semibold">Tutorial</h3>
+            <button id="demoClose" style="border:none;background:none;color:#fff;font-size:20px; cursor:pointer">×</button>
+          </div>
+          <button data-demo-src="{{ asset('tutorials/peminjaman.mp4') }}">Peminjaman</button>
+          <button data-demo-src="{{ asset('tutorials/pengembalian.mp4') }}">Pengembalian</button>
+          <button data-demo-src="{{ asset('tutorials/favorites.mp4') }}">Favorit & Profil</button>
+          <p class="text-xs text-white/70 mt-4">Letakkan file video di <code>public/tutorials</code> (misal: peminjaman.mp4, pengembalian.mp4, favorites.mp4).</p>
+        </div>
+        <div class="demo-video">
+          <video id="demoVideo" controls style="width:100%; border-radius:14px; background:#000" poster="https://dummyimage.com/800x450/000/fff&text=Tutorial">
+            <source src="" type="video/mp4" />
+            Browser anda tidak mendukung video.
+          </video>
+        </div>
+      </div>
+    </div>
     <script>
+      window.homeDemo = (function () {
+        const modal = document.getElementById('demoModal');
+        const video = document.getElementById('demoVideo');
+        const closeBtn = document.getElementById('demoClose');
+        const buttons = document.querySelectorAll('[data-demo-src]');
+        let currentSrc = '';
+        buttons.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const src = btn.getAttribute('data-demo-src');
+            if (!src) return;
+            if (currentSrc !== src) {
+              video.querySelector('source').setAttribute('src', src);
+              video.load();
+              currentSrc = src;
+            }
+            buttons.forEach((b) => b.classList.remove('active-demo'));
+            btn.classList.add('active-demo');
+          });
+        });
+        const open = () => {
+          if (!modal) return;
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          if (buttons.length) buttons[0].click();
+        };
+        const close = () => {
+          if (!modal) return;
+          modal.classList.add('hidden');
+          document.body.style.overflow = '';
+          video.pause();
+        };
+        if (closeBtn) closeBtn.addEventListener('click', close);
+        if (modal) {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) close();
+          });
+        }
+        return { open, close };
+      })();
+
       function toggleMobileMenu() {
         const mobileMenu = document.getElementById('mobileMenu');
         mobileMenu.classList.toggle('active');

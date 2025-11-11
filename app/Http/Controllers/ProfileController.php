@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -40,53 +41,33 @@ class ProfileController extends Controller
 
             if ($request->hasFile('photo')) {
                 $file = $request->file('photo');
-                if (!Storage::exists('public/profile-photos')) {
-                    Storage::makeDirectory('public/profile-photos');
-                }
-                if ($hasPhoto) {
-                    $stored = $file->store('public/profile-photos');
-                    $user->profile_photo_path = str_replace('public/', '', (string) $stored);
-                } else {
-                    $ext = strtolower($file->getClientOriginalExtension() ?: 'png');
-                    // Hapus versi lama
-                    foreach (Storage::files('public/profile-photos') as $f) {
-                        if (preg_match('/profile-photos\/u-' . preg_quote((string) $user->id, '/') . '\.[a-z0-9]+$/i', $f)) {
-                            Storage::delete($f);
-                        }
-                    }
-                    $file->storeAs('public/profile-photos', 'u-' . $user->id . '.' . $ext);
-                }
+                $ext = strtolower($file->getClientOriginalExtension() ?: 'png');
+                $filename = 'u-' . $user->id . '.' . $ext;
 
-                // Duplikasi ke public/uploads/avatars agar bisa diakses statis (tanpa symlink)
+                $storageDir = storage_path('app/public/profile-photos');
+                if (!is_dir($storageDir)) {
+                    @mkdir($storageDir, 0775, true);
+                }
                 $publicAvatarDir = public_path('uploads/avatars');
                 if (!is_dir($publicAvatarDir)) {
                     @mkdir($publicAvatarDir, 0777, true);
                 }
-                // Hapus versi lama di folder publik
+
+                foreach (glob(storage_path('app/public/profile-photos/u-' . $user->id . '.*')) ?: [] as $old) {
+                    @unlink($old);
+                }
                 foreach (glob($publicAvatarDir . DIRECTORY_SEPARATOR . 'u-' . $user->id . '.*') ?: [] as $old) {
                     @unlink($old);
                 }
-                $ext2 = strtolower($file->getClientOriginalExtension() ?: 'png');
-                $src = null;
-                if (!empty($user->profile_photo_path)) {
-                    $cand = storage_path('app/public/' . ltrim((string) $user->profile_photo_path, '/'));
-                    if (is_file($cand)) {
-                        $src = $cand;
-                    }
-                }
-                if (!$src) {
-                    $cands = glob(storage_path('app/public/profile-photos/u-' . $user->id . '.*')) ?: [];
-                    if (!empty($cands)) {
-                        $src = $cands[0];
-                        $ext2 = strtolower(pathinfo($src, PATHINFO_EXTENSION) ?: $ext2);
-                    }
-                }
-                if ($src && is_file($src)) {
-                    $dest = $publicAvatarDir . DIRECTORY_SEPARATOR . 'u-' . $user->id . '.' . $ext2;
-                    @copy($src, $dest);
+
+                Storage::disk('public')->putFileAs('profile-photos', $file, $filename);
+                $src = $storageDir . DIRECTORY_SEPARATOR . $filename;
+                @copy($src, $publicAvatarDir . DIRECTORY_SEPARATOR . $filename);
+
+                if ($hasPhoto) {
+                    $user->profile_photo_path = 'uploads/avatars/' . $filename;
                 }
 
-                // Sentuh timestamp agar avatar di navbar refresh
                 $user->setUpdatedAt(now());
             }
 
@@ -110,49 +91,41 @@ class ProfileController extends Controller
      * Tampilkan foto profil user yang sedang login.
      * Fallback ke SVG in-memory jika belum ada foto atau file tidak ditemukan.
      */
-    public function photo(Request $request)
+    public function photo(Request $request, ?User $subject = null)
     {
-        $user = $request->user();
+        $user = $subject ?? $request->user();
         if (! $user) {
             return response($this->defaultAvatarSvg('U'), 200)->header('Content-Type', 'image/svg+xml');
         }
 
         $initial = strtoupper(substr((string) ($user->name ?? 'U'), 0, 1));
-        $path = (string) ($user->profile_photo_path ?? '');
+        $path = str_replace('\\', '/', (string) ($user->profile_photo_path ?? ''));
 
         if ($path !== '') {
-            $storagePath = 'public/' . ltrim($path, '/');
-            if (Storage::exists($storagePath)) {
-                $abs = storage_path('app/' . $storagePath);
-                $mime = function_exists('mime_content_type') ? (mime_content_type($abs) ?: 'image/png') : 'image/png';
-                return response()->file($abs, [
-                    'Content-Type' => $mime,
-                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                ]);
-            }
-
-            $publicPath = public_path(ltrim($path, '/'));
-            if (is_file($publicPath)) {
-                $mime = function_exists('mime_content_type') ? (mime_content_type($publicPath) ?: 'image/png') : 'image/png';
-                return response()->file($publicPath, [
-                    'Content-Type' => $mime,
-                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                ]);
+            $candidates = [
+                public_path(ltrim($path, '/')),
+                storage_path('app/public/' . ltrim($path, '/')),
+            ];
+            foreach ($candidates as $candidate) {
+                if (is_file($candidate)) {
+                    $mime = function_exists('mime_content_type') ? (mime_content_type($candidate) ?: 'image/png') : 'image/png';
+                    return response()->file($candidate, [
+                        'Content-Type' => $mime,
+                        'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                    ]);
+                }
             }
         }
 
-        // Fallback: jika kolom tidak ada/ kosong, cari file dengan pola u-<id>.*
-        foreach (Storage::files('public/profile-photos') as $f) {
-            $normalized = str_replace('\\', '/', $f);
-            $base = basename($normalized);
-            if (preg_match('/^u-' . preg_quote((string) $user->id, '/') . '\.[a-zA-Z0-9]+$/', $base)) {
-                $abs = storage_path('app/' . $f);
-                $mime = function_exists('mime_content_type') ? (mime_content_type($abs) ?: 'image/png') : 'image/png';
-                return response()->file($abs, [
-                    'Content-Type' => $mime,
-                    'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                ]);
-            }
+        // Fallback: cari file pola u-<id>.* di storage
+        $fallbackLocal = glob(storage_path('app/public/profile-photos/u-' . $user->id . '.*')) ?: [];
+        if (!empty($fallbackLocal)) {
+            $abs = $fallbackLocal[0];
+            $mime = function_exists('mime_content_type') ? (mime_content_type($abs) ?: 'image/png') : 'image/png';
+            return response()->file($abs, [
+                'Content-Type' => $mime,
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            ]);
         }
 
         // Cek juga di public/uploads/avatars

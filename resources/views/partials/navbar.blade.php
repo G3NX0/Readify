@@ -83,6 +83,7 @@
             <a class="nav-link" href="{{ route("categories.index") }}">Categories</a>
             <a class="nav-link" href="{{ route("borrowings.index") }}">Borrowings</a>
             <a class="nav-link" href="{{ route('analytics.index') }}">Analytics</a>
+            <a class="nav-link" href="{{ route('admin.stack') }}">Stack</a>
           @endif
           @if ($isLogged)
             <form action="{{ route('logout') }}" method="POST">
@@ -101,17 +102,11 @@
               <path d="M12 21s-6.716-4.297-9.333-8.06C1.49 11.272 1 9.922 1 8.5 1 6.015 3.015 4 5.5 4c1.54 0 2.938.74 3.82 1.88L12 7.94l2.68-2.06C15.562 4.74 16.96 4 18.5 4 20.985 4 23 6.015 23 8.5c0 1.422-.489 2.772-1.667 4.44C18.716 16.703 12 21 12 21z" stroke="currentColor" stroke-width="1.6" fill="none"/>
             </svg>
           </a>
-          @php
-            $initial = strtoupper(substr(auth()->user()->name ?? 'U', 0, 1));
-            $fallbackSvg = "<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect width='100%' height='100%' fill='%230b0b0b'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' fill='%23fff' font-family='Arial' font-size='28'>" . $initial . "</text></svg>";
-            $fallbackData = 'data:image/svg+xml;base64,' . base64_encode($fallbackSvg);
-          @endphp
           <a href="{{ route('profile.edit') }}" class="hidden md:inline-flex" title="Profile">
             <img
-              src="{{ route('profile.photo') }}?v={{ auth()->user()->updated_at?->timestamp }}"
+              src="{{ route('profile.photo', auth()->id()) }}?v={{ auth()->user()->updated_at?->timestamp }}"
               alt="Profile"
               style="width: 36px; height: 36px; border-radius: 9999px; object-fit: cover; border: 1px solid rgba(255,255,255,0.3);"
-              onerror="this.onerror=null; this.src='{{ $fallbackData }}'"
             />
           </a>
         @endif
@@ -192,19 +187,34 @@
         <a class="nav-link" href="{{ route('books.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Books</a>
         <a class="nav-link" href="{{ route('categories.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Categories</a>
         <a class="nav-link" href="{{ route('borrowings.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Borrowings</a>
-        <form action="{{ route('logout') }}" method="POST">
-          @csrf
-          <button class="nav-link" style="text-align: left; background: none; border: none; padding: 0">Logout</button>
-        </form>
-      @elseif($isLogged)
-        <a class="nav-link" href="{{ route('profile.edit') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Profile</a>
+        <a class="nav-link" href="{{ route('analytics.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Analytics</a>
+        <a class="nav-link" href="{{ route('admin.stack') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Stack</a>
         <form action="{{ route('logout') }}" method="POST">
           @csrf
           <button class="nav-link" style="text-align: left; background: none; border: none; padding: 0">Logout</button>
         </form>
       @else
-        <a class="nav-link" href="{{ route('login') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Login</a>
-        <a class="nav-link" href="{{ route('register') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Register</a>
+        @if($isLogged)
+          <div class="flex items-center gap-3">
+            <a class="nav-link" href="{{ route('profile.edit') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Profile</a>
+            <span class="inline-flex">
+              <img
+                src="{{ route('profile.photo', auth()->id()) }}?v={{ auth()->user()->updated_at?->timestamp }}"
+                alt="Profile"
+                style="width: 36px; height: 36px; border-radius: 9999px; object-fit: cover; border: 1px solid rgba(255,255,255,0.3);"
+              />
+            </span>
+          </div>
+          <a class="nav-link" href="{{ route('returns.form') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Return</a>
+          <a class="nav-link" href="{{ route('favorites.index') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Favorites</a>
+          <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button class="nav-link" style="text-align: left; background: none; border: none; padding: 0">Logout</button>
+          </form>
+        @else
+          <a class="nav-link" href="{{ route('login') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Login</a>
+          <a class="nav-link" href="{{ route('register') }}" onclick="document.getElementById('navOverlay').click(); try{document.body.style.overflow='';}catch(e){}">Register</a>
+        @endif
       @endif
     </div>
   </div>

@@ -15,9 +15,14 @@
       <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @csrf
 
+        @php
+          $currentFilename = $user->profile_photo_path
+            ? \Illuminate\Support\Str::afterLast(str_replace('\\', '/', $user->profile_photo_path), '/')
+            : null;
+        @endphp
         <div class="col-span-1 md:col-span-2 flex items-center gap-4 mb-2">
           <div class="w-16 h-16 rounded-full overflow-hidden bg-white/10 border border-white/20 flex items-center justify-center">
-            <img id="profilePreview" src="{{ route('profile.photo') }}?v={{ $user->updated_at?->timestamp }}" alt="PP" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,{{ base64_encode("<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='%230b0b0b'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' fill='%23fff' font-family='Arial' font-size='96'>" . strtoupper(substr($user->name ?? 'U', 0, 1)) . "</text></svg>") }}'" />
+            <img id="profilePreview" src="{{ route('profile.photo', $user->id) }}?v={{ $user->updated_at?->timestamp }}" alt="PP" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,{{ base64_encode("<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='%230b0b0b'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' fill='%23fff' font-family='Arial' font-size='96'>" . strtoupper(substr($user->name ?? 'U', 0, 1)) . "</text></svg>") }}'" />
           </div>
           <div>
             <label class="block text-sm mb-1">Foto Profil</label>
@@ -25,7 +30,7 @@
             <label for="photoInput" class="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-white text-black text-sm font-medium cursor-pointer">
               Pilih File
             </label>
-            <span id="photoFilename" class="ml-2 text-xs text-gray-300">Belum ada file</span>
+            <span id="photoFilename" class="ml-2 text-xs text-gray-300">{{ $currentFilename ? 'Avatar tersimpan' : 'Belum ada file' }}</span>
           </div>
         </div>
 

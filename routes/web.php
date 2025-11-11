@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\AdminInfoController;
 
 Route::get('/', function () {
     return auth()->check() ? view('home') : view('onboard');
@@ -45,6 +46,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
   Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
   Route::get('analytics/data', [AnalyticsController::class, 'data'])->name('analytics.data');
   Route::get('analytics/summary', [AnalyticsController::class, 'summary'])->name('analytics.summary');
+
+  // Informasi stack & fitur
+  Route::get('admin/stack', [AdminInfoController::class, 'techStack'])->name('admin.stack');
 });
 
 // Area pengguna (harus login terlebih dahulu)
@@ -69,5 +73,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('favorites/{book}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
 });
 
-// Avatar profil bisa diakses publik; jika belum login, tampilkan placeholder
-Route::get('profile/photo', [ProfileController::class, 'photo'])->name('profile.photo');
+// Avatar profil (opsional user ID)
+Route::get('profile/photo/{user?}', [ProfileController::class, 'photo'])->name('profile.photo');
